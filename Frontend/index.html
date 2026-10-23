@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestión Bibliotecaria</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-slate-100 font-sans text-slate-800 antialiased min-h-screen flex flex-col">
+
+    
+    <header class="bg-indigo-900 text-white shadow-lg sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                
+                
+                <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('dashboard')">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-md">
+                        <i class="fa-solid fa-book-bookmark"></i>
+                    </div>
+                    <div>
+                        <span class="font-bold text-xl tracking-tight text-white block">BiblioTech</span>
+                        <span class="text-xs text-indigo-300 block -mt-1">Gestión Bibliotecaria v1.0</span>
+                    </div>
+                </div>
+
+                
+                <nav class="hidden md:flex space-x-2">
+                    <button id="nav-dashboard" onclick="switchTab('dashboard')" class="nav-btn bg-indigo-700 text-white px-3.5 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">
+                        <i class="fa-solid fa-chart-pie"></i> Inicio
+                    </button>
+                    <button id="nav-libros" onclick="switchTab('libros')" class="nav-btn text-indigo-100 hover:bg-indigo-600 px-3.5 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">
+                        <i class="fa-solid fa-book"></i> Catálogo Libros
+                    </button>
+                    <button id="nav-lectores" onclick="switchTab('lectores')" class="nav-btn text-indigo-100 hover:bg-indigo-600 px-3.5 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">
+                        <i class="fa-solid fa-users"></i> Lectores
+                    </button>
+                    <button id="nav-prestamos" onclick="switchTab('prestamos')" class="nav-btn text-indigo-100 hover:bg-indigo-600 px-3.5 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">
+                        <i class="fa-solid fa-hand-holding-hand"></i> Préstamos
+                    </button>
+                    <button id="nav-examen" onclick="switchTab('examen')" class="nav-btn text-indigo-100 hover:bg-indigo-600 px-3.5 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">
+                        <i class="fa-solid fa-file-contract"></i> Ficha Examen
+                    </button>
+                </nav>
+
+                <div class="flex items-center gap-2">
+                    <span class="text-xs bg-indigo-800 text-indigo-200 px-3 py-1 rounded-full font-mono border border-indigo-700">
+                        <i class="fa-solid fa-circle text-emerald-400 text-[10px] mr-1"></i>En Vivo
+                    </span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+       
+        <section id="tab-dashboard" class="tab-content space-y-6">
+            <div class="bg-gradient-to-r from-indigo-800 to-indigo-600 rounded-2xl p-6 text-white shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h1 class="text-2xl font-bold">Panel de Control Bibliotecario</h1>
+                    <p class="text-indigo-100 text-sm mt-1">Resumen general de inventario, lectores activos y préstamos en tiempo real.</p>
+                </div>
+                <button onclick="openModal('modal-prestamo')" class="bg-white text-indigo-900 font-semibold px-4 py-2.5 rounded-xl text-sm shadow hover:bg-indigo-50 transition flex items-center gap-2">
+                    <i class="fa-solid fa-plus-circle text-indigo-600"></i> Nuevo Préstamo
+                </button>
+            </div>
+
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-book"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Total Libros</span>
+                        <p id="dash-total-libros" class="text-2xl font-bold text-slate-800">0</p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-hand-holding"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Libros Prestados</span>
+                        <p id="dash-prestados" class="text-2xl font-bold text-slate-800">0</p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Lectores Activos</span>
+                        <p id="dash-lectores" class="text-2xl font-bold text-slate-800">0</p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Préstamos Vencidos</span>
+                        <p id="dash-vencidos" class="text-2xl font-bold text-slate-800">0</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+       
+        <section id="tab-libros" class="tab-content hidden space-y-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto flex-1">
+                    <div class="relative w-full sm:w-72">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400"></i>
+                        <input type="text" id="search-libro" oninput="renderLibrosTable()" placeholder="Buscar por título, autor o código..." class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                    </div>
+
+                    <select id="filter-categoria" onchange="renderLibrosTable()" class="border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-700 bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                        <option value="Todas">Todas las categorías</option>
+                        <option value="Literatura">Literatura</option>
+                        <option value="Tecnología">Tecnología</option>
+                        <option value="Ciencia">Ciencia</option>
+                        <option value="Historia">Historia</option>
+                    </select>
+                </div>
+
+                <button onclick="openModal('modal-libro')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2 rounded-xl text-sm shadow transition flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i> Registrar Libro
+                </button>
+            </div>
+
+            
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-200 text-xs uppercase text-slate-500 font-semibold tracking-wider">
+                                <th class="px-6 py-4">Código</th>
+                                <th class="px-6 py-4">Título</th>
+                                <th class="px-6 py-4">Autor</th>
+                                <th class="px-6 py-4">Categoría</th>
+                                <th class="px-6 py-4">Disponibilidad / Stock</th>
+                                <th class="px-6 py-4 text-right">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-libros" class="divide-y divide-slate-100 text-sm">
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        
+        <section id="tab-lectores" class="tab-content hidden space-y-6">
+            <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                <h2 class="text-lg font-bold text-slate-800">Directorio de Lectores / Usuarios</h2>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-200 text-xs uppercase text-slate-500 font-semibold tracking-wider">
+                                <th class="px-6 py-4">Código</th>
+                                <th class="px-6 py-4">Nombre Completo</th>
+                                <th class="px-6 py-4">Correo Electrónico</th>
+                                <th class="px-6 py-4">Teléfono</th>
+                                <th class="px-6 py-4 text-center">Préstamos Activos</th>
+                                <th class="px-6 py-4">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-lectores" class="divide-y divide-slate-100 text-sm">
+                            <!-- Inyectado dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        
+        <section id="tab-prestamos" class="tab-content hidden space-y-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-800">Gestión de Préstamos y Devoluciones</h2>
+                    <p class="text-xs text-slate-500">Control operativo de ejemplares prestados y retorno al inventario.</p>
+                </div>
+                <button onclick="openModal('modal-prestamo')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2 rounded-xl text-sm shadow transition flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i> Registrar Préstamo
+                </button>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-200 text-xs uppercase text-slate-500 font-semibold tracking-wider">
+                                <th class="px-6 py-4">Código</th>
+                                <th class="px-6 py-4">Libro</th>
+                                <th class="px-6 py-4">Lector</th>
+                                <th class="px-6 py-4">Fecha Préstamo</th>
+                                <th class="px-6 py-4">Fecha Límite</th>
+                                <th class="px-6 py-4">Estado</th>
+                                <th class="px-6 py-4 text-right">Operación</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-prestamos" class="divide-y divide-slate-100 text-sm">
+                            <!-- Inyectado dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+       
+        <section id="tab-examen" class="tab-content hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                <h2 class="text-xl font-bold text-indigo-900 border-b pb-2">Documentación del Proyecto (Ficha Examen)</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                    <div class="space-y-2">
+                        <p><strong>Proyecto:</strong> BiblioTech — Sistema Bibliotecario Inteligente</p>
+                        <p><strong>Metodología:</strong> Ciclo de Vida de Desarrollo en 8 Fases</p>
+                        <p><strong>Integrantes:</strong> Equipo de 6 Estudiantes</p>
+                    </div>
+                    <div class="space-y-2">
+                        <p><strong>Stack Frontend:</strong> HTML5, Tailwind CSS, JavaScript ES6</p>
+                        <p><strong>Arquitectura:</strong> SPA (Single Page Application) sin backend</p>
+                        <p><strong>Despliegue:</strong> GitHub Pages</p>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-4 border-t border-slate-200">
+                    <h3 class="font-bold text-slate-800 mb-2">Requisitos Funcionales Demostrados:</h3>
+                    <ul class="list-disc list-inside space-y-1 text-sm text-slate-600">
+                        <li><strong>RF-01:</strong> Búsqueda y filtrado instantáneo por categoría y texto.</li>
+                        <li><strong>RF-02:</strong> Registro dinámico de libros en inventario.</li>
+                        <li><strong>RF-03:</strong> Emisión de préstamos vinculando lector y libro.</li>
+                        <li><strong>RF-04:</strong> Descuento e incremento automático de stock al prestar y devolver.</li>
+                        <li><strong>RF-05:</strong> Actualización en vivo de tarjetas KPI en el Dashboard.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    
+    <div id="modal-libro" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop hidden p-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="text-lg font-bold text-slate-800">Registrar Nuevo Libro</h3>
+                <button onclick="closeModal('modal-libro')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form id="form-nuevo-libro" onsubmit="guardarNuevoLibro(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Título del Libro</label>
+                    <input type="text" id="nuevo-titulo" required class="w-full px-3 py-2 border rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Autor</label>
+                    <input type="text" id="nuevo-autor" required class="w-full px-3 py-2 border rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Categoría</label>
+                        <select id="nueva-categoria" class="w-full px-3 py-2 border rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
+                            <option value="Literatura">Literatura</option>
+                            <option value="Tecnología">Tecnología</option>
+                            <option value="Ciencia">Ciencia</option>
+                            <option value="Historia">Historia</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Stock Inicial</label>
+                        <input type="number" id="nuevo-stock" min="1" value="3" required class="w-full px-3 py-2 border rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                    </div>
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeModal('modal-libro')" class="px-4 py-2 border rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-semibold hover:bg-indigo-700 shadow">Guardar Libro</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+   
+    <div id="modal-prestamo" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop hidden p-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="text-lg font-bold text-slate-800">Registrar Nuevo Préstamo</h3>
+                <button onclick="closeModal('modal-prestamo')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form id="form-nuevo-prestamo" onsubmit="guardarNuevoPrestamo(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Seleccionar Libro</label>
+                    <select id="select-prestamo-libro" required class="w-full px-3 py-2 border rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
+                       
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Seleccionar Lector</label>
+                    <select id="select-prestamo-lector" required class="w-full px-3 py-2 border rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
+                      
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Fecha Límite de Devolución</label>
+                    <input type="date" id="prestamo-fecha-dev" required class="w-full px-3 py-2 border rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeModal('modal-prestamo')" class="px-4 py-2 border rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-semibold hover:bg-indigo-700 shadow">Emitir Préstamo</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2"></div>
+
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
