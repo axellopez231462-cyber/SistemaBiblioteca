@@ -4,7 +4,7 @@
 - **Lenguaje / Entorno:** Node.js
 - **Framework:** Express.js
 - **Arquitectura:** API RESTful
-- **Autenticación:** JWT (JSON Web Tokens)
+- **Autenticación:** JWT
 
 ## Endpoints Diseñados
 - `GET /api/libros` - Consultar inventario
